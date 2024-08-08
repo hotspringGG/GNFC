@@ -34,6 +34,7 @@ jobs:
 
       - name: Compile libfreefare
         run: |
+          apt-get install autoconf automake git libtool libssl-dev pkg-config
           git clone https://github.com/nfc-tools/libfreefare.git
           cd libfreefare
           autoreconf -vis
