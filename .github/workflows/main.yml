@@ -15,10 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Qt5
-        uses: qt/qt-action@v2
-        with:
-          version: '5.15'
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
 
       - name: Install dependencies
         run: |
@@ -64,14 +62,14 @@ jobs:
 
       - name: Compile GNFC
         run: |
-          git clone https://github.com/yourusername/gnfc.git
-          cd gnfc
+          git clone https://github.com/hotspringGG/GNFC.git
+          cd GNFC/src
           qmake
           make
 
       - name: Package and upload
         run: |
-          tar -czvf gnfc-package.tar.gz /path/to/gnfc
+          tar -czvf gnfc-package.tar.gz .
           gh release create v1.0 gnfc-package.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
