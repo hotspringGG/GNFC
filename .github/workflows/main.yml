@@ -34,7 +34,7 @@ jobs:
 
       - name: Compile libfreefare
         run: |
-          git clone https://github.com/NFCTools/libfreefare.git
+          git clone https://github.com/nfc-tools/libfreefare.git
           cd libfreefare
           autoreconf -vis
           ./configure --prefix=/usr
@@ -43,7 +43,7 @@ jobs:
 
       - name: Compile libllcp
         run: |
-          git clone https://github.com/NFCTools/libllcp.git
+          git clone https://github.com/nfc-tools/libllcp.git
           cd libllcp
           autoreconf -vis
           ./configure --prefix=/usr
@@ -52,7 +52,7 @@ jobs:
 
       - name: Compile libndef
         run: |
-          git clone https://github.com/NFCTools/libndef.git
+          git clone https://github.com/nfc-tools/libndef.git
           cd libndef
           qmake
           make
