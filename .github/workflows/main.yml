@@ -1,0 +1,77 @@
+name: Build and Package
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Qt5
+        uses: qt/qt-action@v2
+        with:
+          version: '5.15'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf libtool pkg-config
+
+      - name: Compile libnfc
+        run: |
+          git clone https://github.com/JiapengLi/libnfc.git
+          cd libnfc
+          autoreconf -vis
+          ./configure --with-drivers=pn532_uart,pn532_net --sysconfdir=/etc --prefix=/usr
+          make
+          sudo make install
+
+      - name: Compile libfreefare
+        run: |
+          git clone https://github.com/NFCTools/libfreefare.git
+          cd libfreefare
+          autoreconf -vis
+          ./configure --prefix=/usr
+          make
+          sudo make install
+
+      - name: Compile libllcp
+        run: |
+          git clone https://github.com/NFCTools/libllcp.git
+          cd libllcp
+          autoreconf -vis
+          ./configure --prefix=/usr
+          make
+          sudo make install
+
+      - name: Compile libndef
+        run: |
+          git clone https://github.com/NFCTools/libndef.git
+          cd libndef
+          qmake
+          make
+          cp libndef/release/libndef1.a /usr/lib
+          cp libndef/release/ndef1.dll /usr/lib
+          cp libndef/include/*.h /usr/include
+
+      - name: Compile GNFC
+        run: |
+          git clone https://github.com/yourusername/gnfc.git
+          cd gnfc
+          qmake
+          make
+
+      - name: Package and upload
+        run: |
+          tar -czvf gnfc-package.tar.gz /path/to/gnfc
+          gh release create v1.0 gnfc-package.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
